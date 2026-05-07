@@ -3,6 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
 
 DF = pd.read_csv("/Users/parmisazizi/Downloads/Coding Documents/ML and AI/titanic.csv")
 
@@ -45,3 +48,22 @@ DF["Sex"] = label_encoder.fit_transform(DF["Sex"])
 DF["Embarked"] = label_encoder.fit_transform(DF["Embarked"])
 
 print(DF.head())
+
+x = DF[["Pclass","Sex","Age","Fare","Embarked","travel alone"]]
+y = DF[["Survived"]]
+
+xtrain, xtest, ytrain, ytest = train_test_split(x,y,test_size = 0.2, random_state = 13)
+
+LR_model = LogisticRegression()
+LR_model.fit(xtrain,ytrain)
+
+ypred = LR_model.predict(xtest)
+matrix = confusion_matrix(ytest,ypred)
+sns.heatmap(matrix,annot = True)
+
+plt.title("confusion matrix")
+plt.xlabel("predicted")
+plt.ylabel("actual")
+plt.show()
+
+print(classification_report(ytest,ypred))
